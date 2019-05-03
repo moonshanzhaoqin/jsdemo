@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	 <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+	 	<style type="text/css">
+	   
+.checkBoxs{
+  
+              width:40px;
+			  height:40px;
+			  margin-top:10px;
+            }
+			
+			.providerAdd input, .providerAdd select {
+    width: 260px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 4px;
+    outline: none;
+    padding-left: 10px;
+	box-shadow: 0px 0px 0px #000000;
+	text-align:center;
+}
+
+#checkBoxs{
+width: 20px;
+    height: 20px;
+    line-height: 20px;
+    border-radius: 4px;
+}
+	</style>
+	 
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>管理系统</h1>
+
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2015年1月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+             <ul class="list">
+                <li><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li id="active"><a href="QueryProductcode.html">造数据</a></li>
+                <li><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >> 造数据页面</span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+              
+                 <div>
+                    <label >ProductCode：</label>
+                    <select name="supplier" id="selectId" onchange="productCodChange()">
+                    </select>
+                    <span>*请选择ProductCode</span>
+                </div>
+				
+				 <div>
+                    <label >渠道Id：</label>
+                    <select name="supplier" id="selectCode" onchange="productRightChange()">
+                    </select>
+                    <span>*请选择供渠道Id</span>
+                </div>
+				
+				<div class="providerAddBtn">
+                    <input type="button" value="保存" id="submit"/>
+                </div>
+				
+				<table class="providerTable" cellpadding="0" cellspacing="0" id="dataTable" hidden="true">
+                <tr class="firstTr">
+                    <th width="10%">id</th>
+                    <th width="30%">名称</th>
+                    <th width="20%">描述</th>
+                    <th width="20%">详情</th>
+                    <th width="20%">操作</th>
+                 
+                </tr>
+            </table>
+			<div class="providerAddBtn" hidden="true" id="btnId">
+                    <input type="button" value="提交" id="b1"/>
+                </div>
+	
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+
+<script>
+    var list = []
+    var productCode = ""
+    var channelIds
+    var channelId = ""  //右侧选择框值
+    var description = ''
+    var names = ""
+    var channelProcessNew//
+    var processList //初始的步骤列表
+    var processInfo //table 表数据
+
+    var selectrequestlist //选中的请求列表
+    var selectStepId //选中的步骤id
+    var requestId //配置表id
+    var interfaceId //接口id
+
+    var stepIds = []
+    var queryParam;
+    var queryParams;
+
+
+    window.onload = function () {
+        console.log("初始化了")
+        getProductCode();
+    }
+
+    function getProductCode() {  //api请求函数
+        $.ajax({
+            url: "http://127.0.0.1:8080/channel/productCode",
+            async: false,
+            type: "GET",
+            crossDomain: true,
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data)
+                if (data.code == "success") {
+                    console.log("成功")
+                    console.log(data.content)
+
+                    var contents = data.content
+                    var channelProcess = new Map();
+                    var aa;
+                    for (var i = 0; i < contents.length; i++) {
+                        if (i >= 0) {
+                            //打印当前key 
+                            // console.log("当前key" + contents[i].product_code)
+                            aa = channelProcess.get(contents[i].product_code);
+                            //判断当前key value 是否存在 不存在拼接
+                            if (typeof aa !== "undefined") {
+                                channelProcess.set(contents[i].product_code, aa + ',' + contents[i].channel_id)
+                            }
+                            else {
+                                channelProcess.set(contents[i].product_code, contents[i].channel_id);
+                            }
+                        }
+                    }
+                    //console.log(channelProcess.keys())
+                    var channelProcessList = channelProcess.keys()
+
+                    // var rigthArr=new Array()
+
+                    var leftArray = Array.from(channelProcessList)
+                    console.log(leftArray.length)
+                    console.log(leftArray[0])
+                    console.log(channelProcess.get(leftArray[0]))
+
+                    var rigthArr = [channelProcess.get(leftArray[0])]
+
+                    list = leftArray
+                    channelIds = rigthArr
+                    channelId = rigthArr[0]
+                    productCode = leftArray[0]
+                    channelProcessNew = channelProcess
+
+                    console.log(list)
+                    console.log(channelIds)
+                    for (var j = 0; j < list.length; j++) {
+                        $("#selectId").append("<option value='" + list[j] + "'>" + list[j] + "</option>");
+                    }
+                    var spliteStr
+                    if (channelIds.toString().indexOf(',')>0) {
+                        spliteStr = channelIds[0].split(",")
+                        for (var k = 0; k < spliteStr.length; k++) {
+                            $("#selectCode").append("<option value='" + spliteStr[k] + "' onclick='choose(" + k + ")'>" + spliteStr[k] + "</option>");
+                        }
+						 channelId = spliteStr[0]
+                    } else {
+					   $("#selectCode").append("<option value='" + channelIds.toString() + "' onclick=''>" + channelIds.toString() + "</option>");
+                    }
+
+                }
+            },
+            error: function () {
+                console.log('失敗2')
+
+            }
+        });
+    };
+
+    function productCodChange() {
+        var choose = $('select  option:selected').val();
+        console.log("choose左侧值:" + choose)
+        console.log("e right:" + choose[0])
+        console.log("对应右侧列表：" + channelProcessNew.get(choose))
+        var rightStr = channelProcessNew.get(choose) + ""
+        var spliteStr
+        if (rightStr.indexOf(',')) {
+            spliteStr = rightStr.split(",")
+            channelIds = spliteStr
+            channelId = spliteStr[0]
+        } else {
+            channelIds = channelProcessNew.get(choose)
+            channelId = channelProcessNew.get(choose)
+        }
+        productCode = choose
+        console.log("右侧默认值：" + channelId)
+        showSelectData(channelIds)
+    }
+
+    function productRightChange() {
+        var choose2 = $("#selectCode").find("option:selected").text();
+        console.log("choose2:" + choose2)
+        channelId = choose2
+    }
+
+    function choose(i) {
+        console.log("i:" + i)
+    }
+
+    function showSelectData(list) {
+        $('#selectCode').html("");
+        for (var k = 0; k < list.length; k++) {
+            $("#selectCode").append("<option value='" + list[k] +
+                "' onclick='choose(" + k + ")'>" + list[k] + "</option>");
+        }
+    }
+
+    document.querySelector("#submit").addEventListener("click", function () {
+        console.log("开始添加步骤》》》》》》》》》》》》")
+        console.log(channelId)
+        console.log(productCode)
+		 $("#dataTable").show();
+		 $("#btnId").show();
+		 
+        getProcessList()
+    })
+
+    function getProcessList() {
+        $.ajax({
+            url: 'http://127.0.0.1:8080/channel/process?channelId=' + parseInt(channelId) +
+                '&productCode=' + productCode,
+            async: false,
+            type: "GET",
+            crossDomain: true,
+            contentType: "application/json",
+            success: function (data) {
+                console.log(data)
+                if (data.message == "success") {
+                    $("#dataTable").html("");
+                    processInfo = data.content.processInfo
+                   var str="<tr class='firstTr'><th width='10%'>id</th><th width='20%'>名称</th><th width='30%'>描述</th><th width='20%'>详情</th>"+
+                    "<th width='20%'>操作</th></tr>";
+                    console.log(processInfo)
+                    if (processInfo != null) {
+                        for (i in processInfo) {
+						str+="<tr class='firstTr'><th width='10%'>" + processInfo[i].id + "</th><th width='20%'>" + processInfo[i].requestlist + "</th><th width='30%'>" + processInfo[i].name + "</th><th width='20%'>" + processInfo[i].description + "</th>"+
+                    "<th width='20%'><input type='checkbox' class='checkBoxs' name='favorite' value='"+processInfo[i].id+"'  /></input></th></tr>";
+					
+                          
+                        }
+                    }
+
+                    $("#dataTable").html(str);
+                }
+                else {
+
+                }
+            }
+        })
+    }
+
+    document.querySelector("#b1").addEventListener("click", function () {
+        inputStepIds = document.getElementsByName("favorite");
+        for (k in inputStepIds) {
+            if (inputStepIds[k].checked) {
+                stepIds.push(inputStepIds[k].value);
+            }
+        }
+        console.log(stepIds);
+        queryParam = stepIds.map(function (item) {
+            return "stepId=" + item;
+        });
+        queryParams = queryParam.join("&");
+        console.log(queryParams)
+        send()
+    });
+
+    function send() {
+        console.log("channelId:" + channelId)
+        console.log("productCode:" + productCode)
+        $('#b1').attr("disabled", true);
+        $.ajax({
+            async: false,
+            url: 'http://127.0.0.1:8080/dataplat/getStepParamater?' + queryParams + "&channelId=" + channelId + "&productCode=" + productCode,
+            type: "get",
+            crossDomain: true,
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            success: function (data) {
+                if (data.code === "success") {
+                    $('#b1').attr("disabled", false);
+                    console.log(data.content)
+                    window.localStorage.setItem("interfaceParams", JSON.stringify(data.content))
+                    window.location.href = "./QueryInterfaceParams.html?channelId="+channelId+"&productCode="+productCode
+                }
+                else {
+                    console.log(data)
+                    alert(data)
+                }
+            },
+            error: function () {
+                console.log('失敗')
+                throw new Error()
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	 <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>管理系统</h1>
+
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2019年1月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+             <ul class="list">
+                <li ><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li id="active"><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li><a href="QueryProductcode.html">造数据</a></li>
+                <li><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >> 添加步骤页面</span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+              
+                <div>
+                    <label >productcode：</label>
+                    <select name="supplier" id="selectId" onchange="productCodChange()">
+                    </select>
+                    <span>*渠道productcode</span>
+                </div>
+				
+				 <div>
+                    <label >渠道Id：</label>
+                    <select name="supplier" id="selectCode" onchange="productRightChange()">
+                    </select>
+                    <span>*请选择渠道Id</span>
+                </div>
+				
+				<div class="">
+                    <label for="billId">步骤名字：</label>
+                    <input type="text" name="billId" id="name"  required/>
+                    <span>*请输入步骤名字</span>
+                </div>
+                <div>
+                    <label for="billName">步骤描述:</label>
+                    <input type="text" name="billName" id="desc" required/>
+                    <span >*请输入步骤描述</span>
+                </div>
+              
+                <div class="providerAddBtn">
+                    <input type="button" value="保存" id="submit"/>
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+<script>
+
+		var list = []
+		var productCode = ""
+		var channelIds
+		var channelId = ""  //右侧选择框值
+		var description = ''
+		var names = ""
+		var channelProcessNew//
+		var processList //初始的步骤列表
+
+		window.onload = function () {
+			console.log("初始化了")
+			getProductCode();
+		}
+
+window.onload = function () {
+			console.log("初始化了")
+			getProductCode();
+		}
+
+		//获取productcode&channelId
+		function getProductCode() {  
+			$.ajax({
+				url: "https://qa-data-generator-demo.corp.dianrong.com/channel/productCode",
+				async: false,
+				type: "GET",
+				crossDomain: true,
+				contentType: "application/json",
+				success: function (data) {
+					console.log(data)
+					if (data.code == "success") {
+						console.log("成功")
+						console.log(data.content)
+						var contents = data.content
+						var channelProcess = new Map();
+						var aa;
+						for (var i = 0; i < contents.length; i++) {
+							if (i >= 0) {
+								//打印当前key 
+								// console.log("当前key" + contents[i].product_code)
+								aa = channelProcess.get(contents[i].product_code);
+								//判断当前key value 是否存在 不存在拼接
+								if (typeof aa !== "undefined") {
+									channelProcess.set(contents[i].product_code, aa + ',' + contents[i].channel_id)
+								}
+								else {
+									channelProcess.set(contents[i].product_code, contents[i].channel_id);
+								}
+							}
+						}
+						//console.log(channelProcess.keys())
+						var channelProcessList = channelProcess.keys()
+
+						// var rigthArr=new Array()
+
+						var leftArray = Array.from(channelProcessList)
+						console.log(leftArray.length)
+						console.log(leftArray[0])
+						console.log(channelProcess.get(leftArray[0]))
+
+						var rigthArr = [channelProcess.get(leftArray[0])]
+
+						list = leftArray
+						channelIds = rigthArr
+						channelId = rigthArr[0]
+						productCode = leftArray[0]
+						channelProcessNew = channelProcess
+
+						console.log(list)
+						console.log(channelIds)
+						for (var j = 0; j < list.length; j++) {
+							$("#selectId").append("<option value='" + list[j] + "'>" + list[j] + "</option>");
+						}
+						var spliteStr
+						if (channelIds.indexOf(',')>0) {
+							spliteStr = channelIds[0].split(",")
+							for (var k = 0; k < spliteStr.length; k++) {
+								$("#selectCode").append("<option value='" + spliteStr[k] + "' onclick='choose(" + k + ")'>" + spliteStr[k] + "</option>");
+							}
+						} else {
+						$("#selectCode").append("<option value='" + channelIds.toString() + "' onclick=''>" + channelIds.toString() + "</option>");
+							
+						}
+
+
+
+					}
+				},
+				error: function () {
+					console.log('失敗2')
+
+				}
+			});
+		};
+
+		function productCodChange() {
+			var choose = $('select  option:selected').val();
+			console.log("choose左侧值:" + choose)
+			console.log("e right:" + choose[0])
+			console.log("对应右侧列表：" + channelProcessNew.get(choose))
+			var rightStr = channelProcessNew.get(choose) + ""
+			var spliteStr
+			if (rightStr.indexOf(',')) {
+				spliteStr = rightStr.split(",")
+				channelIds = spliteStr
+				channelId = spliteStr[0]
+			} else {
+				channelIds = channelProcessNew.get(choose)
+				channelId = channelProcessNew.get(choose)
+			}
+			productCode = choose
+			console.log("右侧默认值：" + channelId)
+			showSelectData(channelIds)
+		}
+
+		function productRightChange() {
+			var choose2 = $("#selectCode").find("option:selected").text();
+			console.log("choose2:" + choose2)
+			channelId = choose2
+		}
+
+		function choose(i) {
+			console.log("i:" + i)
+		}
+
+		function showSelectData(list) {
+			$('#selectCode').html("");
+			for (var k = 0; k < list.length; k++) {
+				$("#selectCode").append("<option value='" + list[k] +
+					"' onclick='choose(" + k + ")'>" + list[k] + "</option>");
+			}
+		}
+
+		document.querySelector("#submit").addEventListener("click", function () {
+			console.log("开始添加步骤》》》》》》》》》》》》")
+			console.log(channelId)
+			console.log(productCode)
+			getProcess()
+		})
+
+
+
+		function getProcess() {  //获取步骤列表
+			console.log("开始步骤列表》》》》》》》》》》》》"+ channelId)
+			$.ajax({
+				url: 'https://qa-data-generator-demo.corp.dianrong.com/channel/process?channelId=' + parseInt(channelId) +
+					'&productCode=' + productCode,
+				async: false,
+				type: "GET",
+				crossDomain: true,
+				contentType: "application/json",
+				success: function (data) {
+					console.log(data)
+					if (data.message == "success") {
+						console.log("方法体中的步骤列表:" + data.content.process)
+						processList = data.content.process
+						beginADD()
+					}
+				},
+				error: function (data) {
+					console.log('失敗2')
+					alert("获取步骤列表失败"+JSON.stringify(data))
+				}
+			});
+		}
+
+		//最终插入
+		function beginADD() {
+
+			var names = $("#name").val()
+			var desc = $("#desc").val()
+
+			var numbers =  [0] //给默认值
+			console.log(numbers)
+			var text = {
+				requestlist: numbers,
+				name: names,
+				description: desc,
+			}//获取数据
+			$.ajax({
+				url: 'http://127.0.0.1:8080/step/interface/relation',
+				async: false,
+				data: JSON.stringify(text),
+				type: "POST",
+				crossDomain: true,
+				contentType: "application/json",
+				success: function (data) {
+					console.log(data)
+					if (data.code == "success") {
+						var str = data.content
+						if (processList == "" | processList == null) {
+							insertProcess(str)
+						} else {
+							insertProcess(processList + "," + str)
+						}
+					}
+				},
+				error: function () {
+					console.log('失敗2')
+				}
+			});
+		}
+
+		function insertProcess(str) { //更新产品需要的步骤
+			console.log("process:" + str)
+			console.log("productCode:" + productCode)
+			console.log("channelId:" + channelId)
+			var text = {
+				productCode: productCode,
+				process: str,
+				channelId: channelId,
+			}
+			$.ajax({
+				url: 'http://127.0.0.1:8080/channel/updateProcessByProductCode',
+				async: false,
+				data: JSON.stringify(text),
+				type: "POST",
+				crossDomain: true,
+				contentType: "application/json",
+				success: function (data) {
+					console.log(data)
+					
+					alert("更新productcode表的步骤列表success")
+					window.location.href="./AddRequestConfig.html"
+				},
+				error: function (data) {
+					console.log('失敗'+data)
+					alert("添加失败"+data)
+				}
+			});
+
+		}
+
+
+	</script>
+</body>
+</html>

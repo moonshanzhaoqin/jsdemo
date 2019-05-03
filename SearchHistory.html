@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script> 
+	<style type="text/css">
+	   table{
+     width: 100%;
+            table-layout:fixed;
+}
+th{
+	white-space:nowrap;
+ overflow:hidden;
+ text-overflow:ellipsis;
+}
+.wrap{
+width: 150px; 
+white-space: nowrap; 
+text-overflow: ellipsis; 
+overflow: hidden; 
+}
+.MHover{
+  
+                white-space:nowrap;
+                text-overflow:ellipsis;
+                overflow:hidden;
+            }
+			
+			.AddBtn {
+    margin-left: 100px;
+    padding-top: 20px;
+}
+	</style>
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>管理系统</h1>
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2019年4月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+            <ul class="list">
+                <li ><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li ><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li><a href="QueryProductcode.html">造数据</a></li>
+                <li id="active"><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >> 搜索历史数据</span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+                <!--div的class 为error是验证错误，ok是验证成功-->
+                <div class="">
+                    <label for="billId">渠道Id：</label>
+                    <input type="text" name="channelId" id="channelId" placeholder="channelId" required/>
+					
+                    <span>*请输入渠道Id</span>
+                </div>
+                <div>
+                    <label for="billName">productCode：</label>
+                    <input type="text" name="productCode" id="productCode" placeholder="productCode" required/>
+                    <span >*请输入productCode</span>
+                </div>
+                
+               
+                <div class="providerAddBtn">
+  
+                    <input type="button" value="搜索" id="submit" />
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+				
+				<table class="providerTable" cellpadding="0" cellspacing="0" id="SearchdataTable" 
+				style="word-break:break-all; word-wrap:break-all;table-layout:fixed;" hidden="true">
+                <tr class="firstTr">
+                    <th width="10%">id</th>
+                    <th width="10%">渠道ID</th>
+                    <th width="10%">productCode</th>
+					<th width="100px" class="wrap">请求参数</th>
+                    <th width="10%">接口名</th>
+                    <th width="10%">接口响应</th>
+                    <th width="10%">创建时间</th>
+                    <th width="10%">userName</th>
+                    <th width="10%">resultParams</th>
+                    <th width="10%">resultCode</th>
+                </tr>
+            </table>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+<script>
+$(document).ready(function () {
+            $(".MALL").hide();
+            $(".MHover").mouseover(function (e) {
+                $(this).next(".MALL").css({"position":"absolute","top":e.pageY+5,"left":e.pageX+5}).show();
+            });
+            $(".MHover").mousemove(function (e) {
+                $(this).next(".MALL").css({ "color": "fff", "position": "absolute", "opacity": "0.7", "background-color": "666", "top": e.pageY + 5, "left": e.pageX + 5 });
+            });
+            $(".MHover").mouseout(function () {
+                $(this).next(".MALL").hide();
+            });
+        });
+		
+
+		
+document.querySelector("#submit").addEventListener("click", function () {
+        var channelId = $("#channelId").val()
+            var productCode = $("#productCode").val()
+            $.ajax({
+                async: false,
+                url: 'http://127.0.0.1:8080/resultHistory/queryByDate?channelId=' + channelId + "&productCode=" + productCode,
+                type: "get",
+                crossDomain: true,
+                dataType: "json",
+                contentType: "application/x-www-form-urlencoded",
+                success: function (data) {
+                    console.log(data)
+                    if (data.code === "success") {
+					
+					 $("#SearchdataTable").show();
+                        console.log(data.content)
+						$("#SearchdataTable").html("");
+						searchResult = data.content
+					
+							
+					
+					var title=" <tr class='firstTr'><th width='10%'>id</th><th width='10%'>渠道ID</th><th width='10%'>productCode</th><th width='100px' class='wrap'><div  >请求参数<div></th><th width='10%'>接口名</th><th width='10%'>接口响应</th><th width='10%'>创建时间</th><th width='10%'>userName</th><th width='10%'>resultParams</th><th width='10%'>resultCode</th></tr>";
+                    
+						console.log(searchResult)
+						if (searchResult != null) {
+							for (i in searchResult) {							
+								title+=" <tr class='firstTr'><th width='10%'>" + searchResult[i].id + "</th><th width='10%'>" + searchResult[i].channelId + "</th><th width='10%'>" + searchResult[i].productCode + "</th><th width='100px' height='60px' class='wrap' title='" + searchResult[i].requestParam + "'><div class='MHover'>" + searchResult[i].requestParam + "</div></th><th width='10%'>" + searchResult[i].failedInterface + "</th><th width='10%'>" + searchResult[i].failedResponse + "</th><th width='10%'>" + searchResult[i].createDate+"</th><th width='10%'>" + searchResult[i].userName+"</th><th width='10%'>" + searchResult[i].resultParams+"</th><th width='10%'>" + searchResult[i].resultCode+"</th></tr>";	
+							}
+						}
+
+						$("#SearchdataTable").html(title);
+					
+                    } else {
+                        console.log(data)
+                        alert(data)
+                    }
+                },
+                error: function () {
+                    console.log('失敗')
+                    throw new Error()
+                }
+            });
+    });
+	
+
+    </script>
+</body>
+</html>

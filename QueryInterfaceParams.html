@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	 <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>管理系统</h1>
+
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2015年1月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+              <ul class="list">
+                <li ><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li id="active"><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li><a href="QueryProductcode.html">造数据</a></li>
+                <li><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >> 查询接口参数</span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+              
+                   接口参数<textarea type="textarea" id="interfaceParam" rows="25" cols="120"></textarea>
+
+                <div class="providerAddBtn">
+                    <input type="button" value="运行" id="b2" />
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+<script>
+    var channelId=GetQueryString("channelId");
+    var productCode=GetQueryString("productCode");
+
+    console.log(channelId)
+    console.log(productCode)
+
+    var interfaceParamsList = window.localStorage.getItem("interfaceParams");
+
+    // interfaceParamsList.productCode = window.localStorage.getItem("productCode");
+    // console.log(interfaceParamsList)
+    var interfaceParamsList2=JSON.parse(interfaceParamsList)
+    console.log(interfaceParamsList2)
+    interfaceParamsList2.productCode=productCode
+    interfaceParamsList2.channelId=channelId
+    console.log(interfaceParamsList2)
+    
+    $("#interfaceParam").val(JSON.stringify(interfaceParamsList2))
+    document.querySelector("#b2").addEventListener("click", function () {
+        routeParam();
+    });
+
+    var flag = true;
+    function routeParam() {
+
+        console.log("参数：" + $("#interfaceParam").val())
+        if (flag) {
+            $.ajax({
+                async: false,
+                url: 'http://127.0.0.1:8080/route/pull/'+"MoonTest",
+                data: $("#interfaceParam").val(),
+                type: "POST",
+                crossDomain: true,
+                dataType: "json",
+                contentType: "application/json",
+                success: function (data) {
+                    if (data.code === "success") {
+                        console.log(data.content)
+                        window.localStorage.setItem("InterfaceResponse", JSON.stringify(data))
+                        window.location.href = "./RoutResponse.html"
+
+                    }
+                    else {
+                        alert(data)
+                    }
+                },
+
+                error: function () {
+                    console.log('失敗2')
+                    throw new Error
+                }
+            });
+
+            flag = false;
+        }
+
+    }
+
+    function GetQueryString(param) { //param为要获取的参数名 注:获取不到是为null
+        var currentUrl = window.location.href; //获取当前链接
+        var arr = currentUrl.split("?");//分割域名和参数界限
+        if (arr.length > 1) {
+            arr = arr[1].split("&");//分割参数
+            for (var i = 0; i < arr.length; i++) {
+                var tem = arr[i].split("="); //分割参数名和参数内容
+                if (tem[0] == param) {
+                    return tem[1];
+                }
+            }
+            return null;
+        }
+        else {
+            return null;
+        }
+    }
+
+</script>
+</body>
+</html>

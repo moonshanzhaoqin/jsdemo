@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	 <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>管理系统</h1>
+
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2015年1月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+              <ul class="list">
+                <li ><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li id="active"><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li><a href="QueryProductcode.html">造数据</a></li>
+                <li><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >> 查询接口参数</span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+              
+                   接口参数<textarea type="textarea" id="interfaceParam" rows="25" cols="120"></textarea>
+
+                <div class="providerAddBtn">
+                    <input type="button" value="保存" id="b2" />
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+
+
+<body>
+    <div id="response"></div>
+</body>
+
+<script>
+    var interfaceParamsList = window.localStorage.getItem("InterfaceResponse")
+    // $("#response").val(interfaceParamsList)
+    alert(interfaceParamsList);
+    document.getElementById("response").innerHTML = interfaceParamsList;
+</script>
+
+</html>

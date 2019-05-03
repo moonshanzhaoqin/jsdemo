@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	 <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+</head>
+<body>
+
+<header class="publicHeader">
+    <h1>管理系统</h1>
+
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+
+<section class="publicTime">
+    <span id="time">2019年1月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+
+<section class="publicMian">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+            <ul class="list">
+                <li ><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li id="active"><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li><a href="QueryProductcode.html">造数据</a></li>
+                <li><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >>添加请求信息页面 </span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+              
+              
+				
+				<label for="billId">请求表信息</label>
+				<div class="">
+                    <label for="billId">请求方法：</label>
+                    <input type="text" name="billId" placeholder="请求方法" id="method"  required/>
+                    <span>*请输入请求方法</span>
+                </div>
+                <div>
+				    <label for="billId">接口URL：</label>
+                    <input type="text" name="billName" placeholder="接口url" id="url" required/>
+                    <span >*请输入接口URL</span>
+                </div>
+				<div>
+				 <label for="billId">Header：</label>
+                    <input type="text" name="billName" placeholder="header" id="header" required/>
+                    <span >*请输入header</span>
+                </div>
+				<div>
+				 <label for="billId">URL参数：</label>
+                    <input type="text" name="billName"  id="param" required/>
+                    <span >*请输入URL参数</span>
+                </div>
+				<div>
+				 <label for="billId">query参数：</label>
+                    <input type="text" name="billName" placeholder="query参数" id="query" required/>
+                    <span >*请输入query参数</span>
+                </div>
+				<div>
+				 <label for="billId">from参数：</label>
+                    <input type="text" name="billName" placeholder="from参数" id="from" required/>
+                    <span >*请输入from参数</span>
+                </div>
+				<div>
+				 <label for="billId">body参数：</label>
+                    <input type="text" name="billName" placeholder="body参数" id="body" required/>
+                    <span >*请输入body参数</span>
+                </div>
+				<div>
+				 <label for="billId">文件参数：</label>
+                    <input type="text" name="billName" placeholder="文件参数" id="file" required/>
+                    <span >*请输入文件参数</span>
+                </div>
+              <div>
+				 <label for="billId">等待时间：</label>
+                    <input type="text" name="billName" placeholder="等待时间" id="wait" required/>
+                    <span >*请输入等待时间</span>
+                </div>
+				<div>
+				 <label for="billId">接口名：</label>
+                    <input type="text" name="billName" placeholder="接口名" id="interfaceName" required/>
+                    <span >*请输入接口名</span>
+                </div>
+				<div>
+				 <label for="billId">接口状态：</label>
+                    <input type="text" name="billName" placeholder="接口状态" id="statuss" required/>
+                    <span >*请输入接口状态</span>
+                </div>
+              
+              
+                <div class="providerAddBtn">
+                    <input type="button" value="新增配置" onclick="addInterfaceConfig()"/>
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+<script>
+
+		
+
+		//添加接口表的数据
+		function addInterfaceConfig() {
+            console.log("body"+$("#body").val())
+			console.log("hello"+$("#method").val())
+			console.log("wait"+$("#wait").val())
+			console.log("wait changdu"+$("#wait").val().length)
+            
+			var method = $("#method").val()
+            var url = $("#url").val()
+			var header = ($("#header").val().length > 0)?JSON.parse($("#header").val()):null;
+			var param = ($("#param").val().length > 0)?JSON.parse($("#param").val()):null;
+			var query = ($("#query").val().length > 0)?JSON.parse($("#query").val()):null;
+			var from = ($("#from").val().length > 0)?JSON.parse($("#from").val()):null;
+			var body = ($("#body").val().length > 0)?JSON.parse($("#body").val()):null;
+			var file = ($("#file").val().length > 0)?JSON.parse($("#file").val()):null;
+			var wait = ($("#wait").val().length > 0)?$("#wait").val():0;
+			var interfaceName = $("#interfaceName").val();
+			var statuss = ($("#statuss").val()>0)?($("#statuss").val()):1;
+
+			
+
+			var data = {
+				"requestMethod": method,
+				"requestUrl": url,
+				"status": statuss,
+				"timeInterval": wait,
+				"bodyParam": body,
+				"fileParam": file,
+				"formParam": from,
+				"interfaceName": interfaceName,
+				"pathParam": param,
+				"queryParam": query,
+				"requestHeader": header
+			}
+
+			$.ajax({
+				url: "http://127.0.0.1:8080/interface/config",
+				async: false,
+				type: "POST",
+				data: JSON.stringify(data),
+				crossDomain: true,
+				contentType: "application/json",
+				success: function (data) {
+					if (data.code == "success") {
+						console.log(data.content)
+						interfaceId = data.content
+						// updateRequestConfig(requestId)
+					} else {
+
+					}
+				}
+			})
+		}
+
+
+		
+	</script>
+</body>
+</html> 
+
+

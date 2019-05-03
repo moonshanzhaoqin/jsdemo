@@ -1,0 +1,144 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>管理系统</title>
+    <link rel="stylesheet" href="css/public.css"/>
+    <link rel="stylesheet" href="css/style.css"/>
+	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script> 
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>管理系统</h1>
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span style="color: #fff21b"> Admin</span> , 欢迎你！</p>
+        <a href="login.html">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2019年4月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+            <ul class="list">
+                <li id="active"><a href="AddProductCodeNew.html">添加产品</a></li>
+                <li ><a href="AddStepRelationRequest.html">添加步骤</a></li>
+                <li><a href="AddRequestConfig.html">添加请求信息</a></li>
+                <li><a href="QueryProductcode.html">造数据</a></li>
+                <li><a href="SearchHistory.html">搜索</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>页面 >> 添加产品页面</span>
+        </div>
+        <div class="providerAdd">
+            <form action="#">
+                <!--div的class 为error是验证错误，ok是验证成功-->
+                <div class="">
+                    <label for="billId">渠道Id：</label>
+                    <input type="text" name="billId" id="Id" required/>
+                    <span>*请输入渠道Id</span>
+                </div>
+                <div>
+                    <label for="billName">productCode：</label>
+                    <input type="text" name="billName" id="code" required/>
+                    <span >*请输入productCode</span>
+                </div>
+                <div>
+                    <label for="billCom">产品名字：</label>
+                    <input type="text" name="billCom" id="productCodeName" required/>
+                    <span>*请输入产品名字</span>
+
+                </div>
+                <div>
+                    <label for="billNum">渠道名字：</label>
+                    <input type="text" name="billNum" id="channelName" required/>
+                    <span>*请输入渠道名字</span>
+                </div>
+                <div>
+                    <label for="money">渠道描述：</label>
+                    <input type="text" name="money" id="desc" required/>
+                    <span>*请输入渠道描述</span>
+                </div>
+               
+                <div class="providerAddBtn">
+  
+                    <input type="button" value="保存" id="submit"/>
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer">
+</footer>
+<script src="js/time.js"></script>
+<script>
+
+		//var appSecret = "pass";
+		var appSecret = "$1234demo";
+		var timestamp = Date.parse(new Date());
+
+		document.querySelector("#submit").addEventListener("click", function () {
+
+			var id = $("#Id").val();
+			var code = $("#code").val();
+			var productCodeName = $("#productCodeName").val();
+			var channelName = $("#channelName").val();
+			var desc = $("#desc").val();
+
+			if (id == "" || code == "" || name1 == "" ||
+				name2 == "" || desc == "") {
+				alert("输入内容不能为空")
+				return
+			}
+			if (isNaN(id)) {
+				alert("渠道id只能为数字")
+				return
+			}
+
+			var text = {
+				channelId: id,
+				channelName: channelName,
+				description: desc,
+				productCode: code,
+				productName: productCodeName,
+                
+			}
+
+			$.ajax({
+				url: "http://127.0.0.1:8080/channel/process",
+				async: false,
+				data: JSON.stringify(text),
+				type: "POST",
+				crossDomain: true,
+				contentType: "application/json",
+				success: function (data) {
+					console.log(data)
+                    if(data.code=="success"){
+						console.log("添加成功："+data.content)
+                     
+						alert("success")
+                        window.location.href="./AddStepRelationRequest.html"
+					}
+				},
+				error: function () {
+					console.log('失敗2')
+
+				}
+			});
+		})
+
+	</script>
+</body>
+</html>
